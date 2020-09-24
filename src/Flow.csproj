@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>3.0.0-preview2</VersionPrefix>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Skclusive.Reactive.Flow</AssemblyName>
+    <PackageId>Skclusive.Reactive.Flow</PackageId>
+    <RootNamespace>Skclusive.Reactive.Flow</RootNamespace>
+    <Authors>Skclusive</Authors>
+    <Company>Skclusive</Company>
+    <Copyright>Skclusive</Copyright>
+    <PackageTags>blazor core components</PackageTags>
+    <PackageProjectUrl>https://github.com/skclusive/Skclusive.Reactive.Flow</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/skclusive/Skclusive.Reactive.Flow</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="4.4.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.8" />
+  </ItemGroup>
+
+</Project>
