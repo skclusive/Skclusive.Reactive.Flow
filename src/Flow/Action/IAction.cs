@@ -1,7 +1,6 @@
 ﻿namespace Skclusive.Reactive.Flow
 {
-    public interface IActionDispatcher
+    public interface IAction
     {
-        void Dispatch(IAction action);
     }
 }
