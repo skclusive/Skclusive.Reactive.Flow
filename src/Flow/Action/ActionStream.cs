@@ -21,22 +21,40 @@ namespace Skclusive.Reactive.Flow
             _subject.OnNext(action);
         }
 
-        public async Task DispatchAsync<T>(IAction action) where T : IAction
+        public Task DispatchAsync<T>(IAction action) where T : IAction
         {
-            var task = Actions.OfType<T>().FirstAsync();
+            var source = new TaskCompletionSource();
+
+            IDisposable disposable = null;
+
+            disposable = _subject.OfType<T>().Subscribe(matched =>
+            {
+                source.SetResult();
+
+                disposable.Dispose();
+            });
 
             Dispatch(action);
 
-            await task;
+            return source.Task;
         }
 
-        public async Task DispatchAsync<T>(IAction action, Func<T, bool> filter) where T : IAction
+        public Task DispatchAsync<T>(IAction action, Func<T, bool> filter) where T : IAction
         {
-            var task = Actions.OfType<T>().Where(filter).FirstAsync();
+            var source = new TaskCompletionSource();
+
+            IDisposable disposable = null;
+
+            disposable = _subject.OfType<T>().Where(filter).Subscribe(matched =>
+            {
+                source.SetResult();
+
+                disposable.Dispose();
+            });
 
             Dispatch(action);
 
-            await task;
+            return source.Task;
         }
     }
 }
