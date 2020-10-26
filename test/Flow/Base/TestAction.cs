@@ -7,16 +7,30 @@ using Xunit;
 
 namespace Skclusive.Reactive.Flow.Tests
 {
-    internal class TestAction : IAction
+    internal class TestStartAction : IAction
+    {
+        internal string Error { init; get; }
+    }
+
+    internal class TestBeginAction : IAction
     {
     }
 
-    internal class TestStartAction : IAction
+    internal class TestFinishAction : IAction
     {
+    }
+
+    internal class TestCancelAction : IAction
+    {
+    }
+
+    internal class TestErrorAction : IAction
+    {
+        internal string Message { init; get; }
     }
 
     internal class TestEndAction : IAction
     {
-        public long Value { get; init; }
+        internal long Value { get; init; }
     }
 }

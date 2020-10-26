@@ -37,9 +37,9 @@ namespace Skclusive.Reactive.Flow
 
             var actions = Observable.Merge(Epics.Select(epic => epic.Configure(ActionObservable.Actions)));
 
-            Subscription = actions.Subscribe((eaction) =>
+            Subscription = actions.Subscribe((action) =>
             {
-                ActionDispatcher.Dispatch(eaction);
+                ActionDispatcher.Dispatch(action);
             });
         }
 

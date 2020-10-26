@@ -7,8 +7,8 @@ namespace Skclusive.Reactive.Flow
     {
         void Dispatch(IAction action);
 
-        Task DispatchAsync<T>(IAction action) where T : IAction;
+        Task<T> DispatchAsync<T>(IAction action) where T : IAction;
 
-        Task DispatchAsync<T>(IAction action, Func<T, bool> filter) where T : IAction;
+        Task<T> DispatchAsync<T>(IAction action, Func<T, bool> filter) where T : IAction;
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 
 namespace Skclusive.Reactive.Flow
 {
@@ -41,7 +43,7 @@ namespace Skclusive.Reactive.Flow
 
             active = true;
 
-            Subscription = ActionObservable.Actions.Subscribe((action) =>
+            Subscription = ActionObservable.Actions.ObserveOn(CurrentThreadScheduler.Instance).Subscribe((action) =>
             {
                 OnNext(action);
             });

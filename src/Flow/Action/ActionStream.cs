@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
@@ -18,20 +19,26 @@ namespace Skclusive.Reactive.Flow
 
         public void Dispatch(IAction action)
         {
+            System.Console.WriteLine($"action: {GetFriendlyName(action.GetType())}");
             _subject.OnNext(action);
         }
 
-        public Task DispatchAsync<T>(IAction action) where T : IAction
+        public Task<T> DispatchAsync<T>(IAction action) where T : IAction
         {
-            var source = new TaskCompletionSource();
+            return DispatchAsync<T>(action, _ => true);
+        }
+
+        public Task<T> DispatchAsync<T>(IAction action, Func<T, bool> filter) where T : IAction
+        {
+            var source = new TaskCompletionSource<T>();
 
             IDisposable disposable = null;
 
-            disposable = _subject.OfType<T>().Subscribe(matched =>
+            disposable = _subject.OfType<T>().Where(filter).FirstAsync().Subscribe(matched =>
             {
-                source.SetResult();
-
                 disposable.Dispose();
+
+                source.SetResult(matched);
             });
 
             Dispatch(action);
@@ -39,22 +46,18 @@ namespace Skclusive.Reactive.Flow
             return source.Task;
         }
 
-        public Task DispatchAsync<T>(IAction action, Func<T, bool> filter) where T : IAction
+        public static string GetFriendlyName(Type type)
         {
-            var source = new TaskCompletionSource();
-
-            IDisposable disposable = null;
-
-            disposable = _subject.OfType<T>().Where(filter).Subscribe(matched =>
+            if (type.IsGenericType)
             {
-                source.SetResult();
-
-                disposable.Dispose();
-            });
-
-            Dispatch(action);
-
-            return source.Task;
+                var name = type.Name.Substring(0, type.Name.IndexOf('`'));
+                var types = string.Join(",", type.GetGenericArguments().Select(GetFriendlyName));
+                return $"{name}<{types}>";
+            }
+            else
+            {
+                return type.Name;
+            }
         }
     }
 }
