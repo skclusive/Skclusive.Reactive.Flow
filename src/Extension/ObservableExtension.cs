@@ -2,6 +2,8 @@
 namespace System.Reactive.Linq
 {
     using System;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Concurrency;
 
     /// <summary>
@@ -85,6 +87,43 @@ namespace System.Reactive.Linq
 
             return pipeline
                 .Dematerialize();
+        }
+
+        // https://stackoverflow.com/questions/64353907/how-can-i-implement-an-exhaustmap-handler-in-rx-net
+        public static IObservable<TResult> ExhaustMap<TSource, TResult>(this IObservable<TSource> source, Func<TSource, Task<TResult>> function)
+        {
+            return source
+                .Scan(Task.FromResult<TResult>(default), (previousTask, item) =>
+                {
+                    return !previousTask.IsCompleted ? previousTask : HideIdentity(function(item));
+                })
+                .DistinctUntilChanged()
+                .Concat();
+
+            async Task<TResult> HideIdentity(Task<TResult> task) => await task;
+        }
+
+        // https://github.com/dotnet/reactive/issues/401
+        public static IObservable<R> ExhaustMap<T, R>(this IObservable<T> source, Func<T, IObservable<R>> mapper)
+        {
+            return Observable.Defer(() =>
+            {
+                var gate = new bool[1];
+                return source.SelectMany(v =>
+                {
+                    if (!Volatile.Read(ref gate[0]))
+                    {
+                        Volatile.Write(ref gate[0], true);
+                        return mapper(v).Do(w => { }, () => Volatile.Write(ref gate[0], false));
+                    }
+                    return Observable.Empty<R>();
+                });
+            });
+        }
+
+        public static IObservable<T> Tick<T>(Func<T> func, IScheduler scheduler = null)
+        {
+            return Observable.Timer(TimeSpan.Zero, scheduler ?? CurrentThreadScheduler.Instance).Select<long, T>(_ => func());
         }
     }
 }

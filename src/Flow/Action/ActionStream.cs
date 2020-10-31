@@ -19,7 +19,7 @@ namespace Skclusive.Reactive.Flow
 
         public void Dispatch(IAction action)
         {
-            System.Console.WriteLine($"action: {GetFriendlyName(action.GetType())}");
+            System.Console.WriteLine($"action: {GetFriendlyName(action.GetType())} at: {DateTimeOffset.UtcNow}");
             _subject.OnNext(action);
         }
 

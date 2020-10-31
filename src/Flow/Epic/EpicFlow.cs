@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 
 namespace Skclusive.Reactive.Flow
@@ -37,7 +38,7 @@ namespace Skclusive.Reactive.Flow
 
             var actions = Observable.Merge(Epics.Select(epic => epic.Configure(ActionObservable.Actions)));
 
-            Subscription = actions.Subscribe((action) =>
+            Subscription = actions.ObserveOn(CurrentThreadScheduler.Instance).Subscribe((action) =>
             {
                 ActionDispatcher.Dispatch(action);
             });
