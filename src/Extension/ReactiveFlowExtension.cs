@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Skclusive.Extensions.DependencyInjection;
 
 namespace Skclusive.Reactive.Flow
 {
@@ -18,6 +19,18 @@ namespace Skclusive.Reactive.Flow
             services.TryAddScoped<IEffectFlow, EffectFlow>();
 
             services.TryAddScoped<IReactiveFlow, ReactiveFlow>();
+        }
+
+        public static void TryAddFlowEpic<TImplementation>(this IServiceCollection services)
+            where TImplementation : class, IEpic
+        {
+            services.TryAddScopedEnumerable<IEpic, TImplementation>();
+        }
+
+        public static void TryAddFlowEffect<TImplementation>(this IServiceCollection services)
+            where TImplementation : class, IEffect
+        {
+            services.TryAddScopedEnumerable<IEffect, TImplementation>();
         }
     }
 }
