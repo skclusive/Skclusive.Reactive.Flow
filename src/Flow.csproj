@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>5.0.0</VersionPrefix>
+    <VersionPrefix>5.1.0</VersionPrefix>
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
     <AssemblyName>Skclusive.Reactive.Flow</AssemblyName>
     <PackageId>Skclusive.Reactive.Flow</PackageId>
     <RootNamespace>Skclusive.Reactive.Flow</RootNamespace>
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="5.0.0" />
-    <PackageReference Include="Skclusive.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Skclusive.Extensions.DependencyInjection" Version="5.1.0" />
   </ItemGroup>
 
 </Project>
