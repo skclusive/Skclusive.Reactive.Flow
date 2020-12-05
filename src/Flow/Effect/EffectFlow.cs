@@ -12,13 +12,17 @@ namespace Skclusive.Reactive.Flow
 
         private IActionObservable ActionObservable { get;  }
 
+        private ISchedulerProvider SchedulerProvider { get; }
+
         private IDisposable Subscription { set; get; }
 
         private bool active;
 
-        public EffectFlow(IEnumerable<IEffect> effects, IActionObservable actionObservable)
+        public EffectFlow(ISchedulerProvider schedulerProvider, IEnumerable<IEffect> effects, IActionObservable actionObservable)
         {
             Effects = effects.ToList();
+
+            SchedulerProvider = schedulerProvider;
 
             ActionObservable = actionObservable;
         }
@@ -43,7 +47,7 @@ namespace Skclusive.Reactive.Flow
 
             active = true;
 
-            Subscription = ActionObservable.Actions.ObserveOn(CurrentThreadScheduler.Instance).Subscribe((action) =>
+            Subscription = ActionObservable.Actions.ObserveOn(SchedulerProvider.Scheduler).Subscribe((action) =>
             {
                 OnNext(action);
             });

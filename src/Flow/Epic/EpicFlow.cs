@@ -14,13 +14,17 @@ namespace Skclusive.Reactive.Flow
 
         private IActionDispatcher ActionDispatcher { get;  }
 
+        private ISchedulerProvider SchedulerProvider { get; }
+
         private IDisposable Subscription { set; get; }
 
         private bool active;
 
-        public EpicFlow(IEnumerable<IEpic> epics, IActionObservable actionObservable, IActionDispatcher actionDispatcher)
+        public EpicFlow(ISchedulerProvider schedulerProvider, IEnumerable<IEpic> epics, IActionObservable actionObservable, IActionDispatcher actionDispatcher)
         {
             Epics = epics.ToList();
+
+            SchedulerProvider = schedulerProvider;
 
             ActionObservable = actionObservable;
 
@@ -38,7 +42,7 @@ namespace Skclusive.Reactive.Flow
 
             var actions = Observable.Merge(Epics.Select(epic => epic.Configure(ActionObservable.Actions)));
 
-            Subscription = actions.ObserveOn(CurrentThreadScheduler.Instance).Subscribe((action) =>
+            Subscription = actions.ObserveOn(SchedulerProvider.Scheduler).Subscribe((action) =>
             {
                 ActionDispatcher.Dispatch(action);
             });

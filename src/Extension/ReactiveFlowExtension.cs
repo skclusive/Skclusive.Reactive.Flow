@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reactive.Concurrency;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Skclusive.Extensions.DependencyInjection;
 
@@ -6,8 +7,10 @@ namespace Skclusive.Reactive.Flow
 {
     public static class ReactiveFlowExtension
     {
-        public static void TryAddReactiveFlowServices(this IServiceCollection services)
+        public static void TryAddReactiveFlowServices(this IServiceCollection services, IScheduler scheduler)
         {
+            services.TryAddScoped<ISchedulerProvider>(sp => new SchedulerProvider { Scheduler = scheduler });
+
             services.TryAddScoped<IActionStream, ActionStream>();
 
             services.TryAddScoped<IActionDispatcher>(sp => sp.GetRequiredService<IActionStream>());
